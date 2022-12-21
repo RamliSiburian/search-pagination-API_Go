@@ -29,4 +29,6 @@ func DatabaseInit() {
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Println("database connected")
 }
