@@ -57,7 +57,7 @@ func (h *handlerArticle) CreateArticle(w http.ResponseWriter, r *http.Request) {
 	var API_KEY = os.Getenv("API_KEY")
 	var API_SECRET = os.Getenv("API_SECRET")
 	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
-	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "halloCorona/articleImage"})
+	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "pagination"})
 
 	if err != nil {
 		fmt.Println(err.Error())
