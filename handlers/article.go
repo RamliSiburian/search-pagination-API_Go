@@ -5,11 +5,16 @@ import (
 	dto "MisterAladin/dto/result"
 	"MisterAladin/models"
 	"MisterAladin/repositories"
+	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/mux"
@@ -47,8 +52,19 @@ func (h *handlerArticle) CreateArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var ctx = context.Background()
+	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
+	var API_KEY = os.Getenv("API_KEY")
+	var API_SECRET = os.Getenv("API_SECRET")
+	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
+	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "halloCorona/articleImage"})
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
 	article := models.Article{
-		Image:   filepath,
+		Image:   resp.SecureURL,
 		Title:   request.Title,
 		Body:    request.Body,
 		Created: time.Now(),
@@ -84,7 +100,7 @@ func (h *handlerArticle) FindArticle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for i, p := range articles {
-		articles[i].Image = "http://localhost:5000/Uploads/" + p.Image
+		articles[i].Image = os.Getenv("PATH_FILE") + p.Image
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -106,7 +122,7 @@ func (h *handlerArticle) GetArticleById(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	article.Image = "http://localhost:5000/Uploads/" + article.Image
+	article.Image = os.Getenv("PATH_FILE") + article.Image
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(article)
@@ -127,8 +143,8 @@ func (h *handlerArticle) GetArticleByUser(w http.ResponseWriter, r *http.Request
 	}
 
 	for i, p := range article {
-		// article[i].Image = os.Getenv("PATH_FILE_ARTICLE") + p.Image
-		article[i].Image = "http://localhost:5000/Uploads/" + p.Image
+		article[i].Image = os.Getenv("PATH_FILE") + p.Image
+		// article[i].Image = "http://localhost:5000/Uploads/" + p.Image
 	}
 
 	w.WriteHeader(http.StatusOK)
