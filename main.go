@@ -1,7 +1,7 @@
 package main
 
 import (
-	databases "MisterAladin/Databases"
+	"MisterAladin/databases"
 	"MisterAladin/pkg/mysql"
 	"MisterAladin/routes"
 	"fmt"
