@@ -50,9 +50,10 @@ func (r *articles) GetArticleByUser(UserID string) ([]models.Article, error) {
 
 	return article, err
 }
+
 func (r *articles) SearchArticle(param string) ([]models.Article, error) {
 	var article []models.Article
-	err := r.db.Where("title LIKE ? || body LIKE ?", "%"+param+"%", "%"+param+"%").Find(&article).Error
+	err := r.db.Where("title LIKE ? ", "%"+param+"%").Or("body LIKE ? ", "%"+param+"%").Find(&article).Error
 
 	return article, err
 }
